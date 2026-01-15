@@ -1,45 +1,107 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Produktübersicht</title>
+  <meta charset="utf-8">
+
+  <meta name="viewport"
+        content="width=device-width,
+                 initial-scale=1,
+                 maximum-scale=1,
+                 user-scalable=no">
+
+  <title>360 Viewer</title>
 
   <style>
-    body {
+    html, body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
-      text-align: center;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      overflow: hidden;
+      touch-action: none;
     }
 
-    h1 {
-      margin-top: 30px;
+    #viewer {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .product {
-      margin: 20px auto;
-      padding: 20px;
-      width: 90%;
-      max-width: 400px;
-      border: 1px solid #444;
-      border-radius: 10px;
-      cursor: pointer;
-      background: #1c1c1c;
-    }
-
-    .product:hover {
-      background: #2a2a2a;
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      user-select: none;
+      pointer-events: none;
     }
   </style>
 </head>
+
 <body>
 
-<h1>Meine Produkte</h1>
+<div id="viewer">
+  <img id="frame" src="product1/images/0_0.jpg" alt="">
+</div>
 
-<div class="product">Table (360°)</div>
-<div class="product">Table (3D)</div>
+<script>
+  const uCount = 21; // 0–20
+  const vCount = 14; // 0–13
+
+  let u = 0;
+  let v = 0;
+
+  let startX = 0;
+  let dragging = false;
+
+  const img = document.getElementById("frame");
+
+  function updateImage() {
+    img.src = product1/images/${v}_${u}.jpg;
+  }
+
+  function startDrag(x) {
+    startX = x;
+    dragging = true;
+  }
+
+  function moveDrag(x) {
+    if (!dragging) return;
+
+    const delta = x - startX;
+
+    if (Math.abs(delta) > 12) {
+      if (delta > 0) {
+        u = (u - 1 + uCount) % uCount;
+      } else {
+        u = (u + 1) % uCount;
+      }
+      startX = x;
+      updateImage();
+    }
+  }
+
+  function endDrag() {
+    dragging = false;
+  }
+
+  // PC
+  document.addEventListener("mousedown", e => startDrag(e.clientX));
+  document.addEventListener("mousemove", e => moveDrag(e.clientX));
+  document.addEventListener("mouseup", endDrag);
+
+  // iPhone / iPad
+  document.addEventListener("touchstart", e => {
+    startDrag(e.touches[0].clientX);
+  }, { passive: true });
+
+  document.addEventListener("touchmove", e => {
+    moveDrag(e.touches[0].clientX);
+  }, { passive: true });
+
+  document.addEventListener("touchend", endDrag);
+</script>
 
 </body>
 </html>
