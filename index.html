@@ -19,7 +19,6 @@
       height: 100%;
       background: black;
       overflow: hidden;
-      touch-action: none;
     }
 
     #viewer {
@@ -30,11 +29,11 @@
       justify-content: center;
     }
 
-    img {
+    #viewer img {
       max-width: 100%;
       max-height: 100%;
       user-select: none;
-      pointer-events: none;
+      -webkit-user-drag: none;
     }
   </style>
 </head>
@@ -42,7 +41,7 @@
 <body>
 
 <div id="viewer">
-  <img id="frame" src="product1/images/0_0.jpg" alt="">
+  <img id="frame" src="product1/images/0_0.jpg">
 </div>
 
 <script>
@@ -52,55 +51,60 @@
   let u = 0;
   let v = 0;
 
-  let startX = 0;
-  let dragging = false;
+  let lastX = null;
 
+  const viewer = document.getElementById("viewer");
   const img = document.getElementById("frame");
 
   function updateImage() {
     img.src = product1/images/${v}_${u}.jpg;
   }
 
-  function startDrag(x) {
-    startX = x;
-    dragging = true;
-  }
+  function handleMove(x) {
+    if (lastX === null) return;
 
-  function moveDrag(x) {
-    if (!dragging) return;
+    const delta = x - lastX;
 
-    const delta = x - startX;
-
-    if (Math.abs(delta) > 12) {
+    if (Math.abs(delta) > 10) {
       if (delta > 0) {
         u = (u - 1 + uCount) % uCount;
       } else {
         u = (u + 1) % uCount;
       }
-      startX = x;
+      lastX = x;
       updateImage();
     }
   }
 
-  function endDrag() {
-    dragging = false;
-  }
+  /* ===== PC ===== */
+  viewer.addEventListener("mousedown", e => {
+    lastX = e.clientX;
+  });
 
-  // PC
-  document.addEventListener("mousedown", e => startDrag(e.clientX));
-  document.addEventListener("mousemove", e => moveDrag(e.clientX));
-  document.addEventListener("mouseup", endDrag);
+  viewer.addEventListener("mousemove", e => {
+    handleMove(e.clientX);
+  });
 
-  // iPhone / iPad
-  document.addEventListener("touchstart", e => {
-    startDrag(e.touches[0].clientX);
-  }, { passive: true });
+  viewer.addEventListener("mouseup", () => {
+    lastX = null;
+  });
 
-  document.addEventListener("touchmove", e => {
-    moveDrag(e.touches[0].clientX);
-  }, { passive: true });
+  viewer.addEventListener("mouseleave", () => {
+    lastX = null;
+  });
 
-  document.addEventListener("touchend", endDrag);
+  /* ===== iPhone / iPad ===== */
+  viewer.addEventListener("touchstart", e => {
+    lastX = e.touches[0].clientX;
+  });
+
+  viewer.addEventListener("touchmove", e => {
+    handleMove(e.touches[0].clientX);
+  });
+
+  viewer.addEventListener("touchend", () => {
+    lastX = null;
+  });
 </script>
 
 </body>
