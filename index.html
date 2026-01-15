@@ -1,57 +1,106 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meine Produkte</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background-color: black;
-      font-family: sans-serif;
-      color: white;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    h1 {
-      margin-bottom: 50px;
-    }
+<title>My Products</title>
 
-    button {
-      padding: 20px 40px;
-      margin: 20px;
-      font-size: 1.2em;
-      cursor: pointer;
-      border: none;
-      border-radius: 8px;
-      background-color: #222;
-      color: white;
-      transition: 0.2s;
-    }
+<!-- Fake App / iOS -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="My Products">
 
-    button:hover {
-      background-color: #555;
-    }
-  </style>
+<!-- Android / PWA -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#000000">
+
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  background: black;
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Splash Screen */
+#splash {
+  position: fixed;
+  inset: 0;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  letter-spacing: 1px;
+  z-index: 9999;
+}
+
+/* Main Menu */
+#menu {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  font-weight: 500;
+  margin-bottom: 50px;
+}
+
+.button {
+  width: 260px;
+  padding: 18px;
+  margin: 15px;
+  font-size: 18px;
+  border-radius: 14px;
+  border: 1px solid #333;
+  background: #111;
+  color: white;
+  cursor: pointer;
+}
+
+.button:active {
+  background: #222;
+}
+</style>
 </head>
+
 <body>
 
-  <h1>Meine Produkte</h1>
+<!-- Splash -->
+<div id="splash">Loading…</div>
 
-  <!-- Table 360° -->
-  <button onclick="window.location.href='product1/wrapper.html'">
+<!-- Menu -->
+<div id="menu">
+  <h1>My Products</h1>
+
+  <button class="button" onclick="location.href='product1/wrapper.html'">
     Table 360°
   </button>
 
-  <!-- Table 3D -->
-  <button onclick="window.location.href='product2/product2.usdz'">
+  <button class="button" onclick="location.href='product2/product2.usdz'">
     Table 3D
   </button>
+</div>
+
+<script>
+  setTimeout(() => {
+    document.getElementById('splash').style.display = 'none';
+    document.getElementById('menu').style.display = 'flex';
+  }, 1200);
+</script>
 
 </body>
 </html>
