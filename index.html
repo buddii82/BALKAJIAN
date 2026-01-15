@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
 
+  <!-- iPhone / iPad extrem wichtig -->
   <meta name="viewport"
         content="width=device-width,
                  initial-scale=1,
@@ -27,6 +28,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      touch-action: none; /* für Pointer Events */
     }
 
     #viewer img {
@@ -34,6 +36,7 @@
       max-height: 100%;
       user-select: none;
       -webkit-user-drag: none;
+      pointer-events: none;
     }
   </style>
 </head>
@@ -45,13 +48,14 @@
 </div>
 
 <script>
-  const uCount = 21; // 0–20
-  const vCount = 14; // 0–13
+  const uCount = 21; // horizontal: 0–20
+  const vCount = 14; // vertikal: 0–13
 
   let u = 0;
   let v = 0;
 
-  let lastX = null;
+  let pointerActive = false;
+  let lastX = 0;
 
   const viewer = document.getElementById("viewer");
   const img = document.getElementById("frame");
@@ -60,51 +64,35 @@
     img.src = product1/images/${v}_${u}.jpg;
   }
 
-  function handleMove(x) {
-    if (lastX === null) return;
+  // Pointer Events für iPhone + iPad + PC
+  viewer.addEventListener("pointerdown", e => {
+    pointerActive = true;
+    lastX = e.clientX;
+  });
 
-    const delta = x - lastX;
+  viewer.addEventListener("pointermove", e => {
+    if (!pointerActive) return;
 
+    const delta = e.clientX - lastX;
     if (Math.abs(delta) > 10) {
       if (delta > 0) {
         u = (u - 1 + uCount) % uCount;
       } else {
         u = (u + 1) % uCount;
       }
-      lastX = x;
+      lastX = e.clientX;
       updateImage();
     }
-  }
-
-  /* ===== PC ===== */
-  viewer.addEventListener("mousedown", e => {
-    lastX = e.clientX;
   });
 
-  viewer.addEventListener("mousemove", e => {
-    handleMove(e.clientX);
+  viewer.addEventListener("pointerup", () => {
+    pointerActive = false;
   });
 
-  viewer.addEventListener("mouseup", () => {
-    lastX = null;
+  viewer.addEventListener("pointerleave", () => {
+    pointerActive = false;
   });
 
-  viewer.addEventListener("mouseleave", () => {
-    lastX = null;
-  });
-
-  /* ===== iPhone / iPad ===== */
-  viewer.addEventListener("touchstart", e => {
-    lastX = e.touches[0].clientX;
-  });
-
-  viewer.addEventListener("touchmove", e => {
-    handleMove(e.touches[0].clientX);
-  });
-
-  viewer.addEventListener("touchend", () => {
-    lastX = null;
-  });
 </script>
 
 </body>
